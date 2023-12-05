@@ -2,6 +2,8 @@ package net.codetreats.aoc.day05
 
 import net.codetreats.aoc.Day
 import net.codetreats.aoc.util.Logger
+import java.lang.Long.compare
+import java.util.Comparator
 
 data class NumberRange(var from: Long, var to: Long, var shift: Long = 0L) {
     fun split(at: NumberRange): List<NumberRange> {
@@ -60,7 +62,35 @@ class Day05 : Day<List<List<NumberRange>>>(5) {
         return locations.min().toString()
     }
 
-    override fun run2(data: List<List<NumberRange>>): String {
+    private fun reverse(data: List<List<NumberRange>>): String {
+        val chunkSize = 100_000
+        for (chunk in 0..Long.MAX_VALUE / chunkSize) {
+            logger.debug("Chunk #$chunk; size $chunkSize")
+            val results = (chunk * chunkSize..Long.MAX_VALUE).take(chunkSize).parallelStream().map { initLocation ->
+                var location = initLocation
+                data.reversed().forEach { mapping ->
+                    val match = mapping.findLast { range -> location - range.shift >= range.from && location - range.shift < range.to }
+                    if (match != null) {
+                        location -= match.shift
+                    }
+                }
+                if (seedRanges.any { location in it.from..<it.to }) {
+                    initLocation
+                } else {
+                    null
+                }
+
+            }
+
+            val min = results.filter { it != null }.map { it as Long }.min(::compare)
+            if (min.isPresent) {
+                return min.get().toString()
+            }
+        }
+        return "" // should not be reached
+    }
+
+    private fun intervals(data: List<List<NumberRange>>): String {
         val locations = seedRanges.map { seedRange ->
             var locations = setOf(seedRange)
             data.forEach { list ->
@@ -84,5 +114,10 @@ class Day05 : Day<List<List<NumberRange>>>(5) {
 
         //still kind of buggy, filter > 0 shouldn't be necessary ...
         return locations.minOf { it.filter {it.from > 0}.minOf { it.from } }.toString()
+    }
+
+    override fun run2(data: List<List<NumberRange>>): String {
+        //return intervals(data) // fast implementation (buggy but works for given input)
+        return reverse(data) // brute force implementation
     }
 }
