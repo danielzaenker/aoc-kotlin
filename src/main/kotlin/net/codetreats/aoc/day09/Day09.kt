@@ -13,8 +13,8 @@ class Day09 : Day<List<List<Long>>>(9) {
     }
 
     private fun getNextRow(cur: List<Long>): List<Long> {
-        return cur.drop(1).mapIndexed { idx, value ->
-            value - cur[idx] // == idx-1 because of drop(1)
+        return cur.windowed(2) { (first, second) ->
+            second - first
         }
     }
 
