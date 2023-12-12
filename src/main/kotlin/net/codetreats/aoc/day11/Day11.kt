@@ -33,6 +33,7 @@ class Day11 : Day<List<String>>(11) {
         }.filterNotNull()
 
         val pairs = mutableSetOf<Pair<Point, Point>>()
+
         galaxies.forEach { a ->
             galaxies.forEach { b ->
                 if (Pair(a, b) !in pairs && Pair(b, a) !in pairs && a != b) {
@@ -41,7 +42,7 @@ class Day11 : Day<List<String>>(11) {
             }
         }
 
-        return pairs.sumOf { pair ->
+        val distances = pairs.parallelStream().map { pair ->
             val (x1, x2) = listOf(pair.first.x, pair.second.x).sorted()
             val (y1, y2) = listOf(pair.first.y, pair.second.y).sorted()
             val expandX = emptyColIndices.count { it in x1..<x2 }
@@ -50,6 +51,7 @@ class Day11 : Day<List<String>>(11) {
             val distY = y2 - y1 + expandY * (expandTo - 1)
             distX + distY
         }
+        return distances.toList().sum()
     }
 
     override fun run1(data: List<String>): String {
