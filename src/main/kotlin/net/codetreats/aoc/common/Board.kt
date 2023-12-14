@@ -61,3 +61,13 @@ open class Board<T>(val width: Int, val height: Int, private val initialValue: T
 
     open fun valueToString(value: T) : String = value.toString()
 }
+
+fun boardfromInput(data: List<String>): Board<Char> {
+    val board = Board(data.first().length, data.size, ' ')
+    data.forEachIndexed { y, line ->
+        line.forEachIndexed { x, c ->
+            board.set(x, y, c)
+        }
+    }
+    return board
+}

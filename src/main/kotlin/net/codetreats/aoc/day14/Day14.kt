@@ -2,6 +2,7 @@ package net.codetreats.aoc.day14
 
 import net.codetreats.aoc.Day
 import net.codetreats.aoc.common.Board
+import net.codetreats.aoc.common.boardfromInput
 import net.codetreats.aoc.util.Logger
 
 private enum class Direction {
@@ -20,8 +21,8 @@ class Day14 : Day<List<String>>(14) {
         when (direction) {
             Direction.NORTH -> {
                 val toInsert = MutableList(this.width) { 0 }
-                for (y in 0..<this.height) {
-                    for (x in 0..<this.width) {
+                for (y in 0 until this.height) {
+                    for (x in 0 until this.width) {
                         val cur = this.get(x, y)
                         if (cur.value == 'O') {
                             newBoard.set(x, toInsert[x], 'O')
@@ -37,8 +38,8 @@ class Day14 : Day<List<String>>(14) {
 
             Direction.WEST -> {
                 val toInsert = MutableList(this.height) { 0 }
-                for (x in 0..<this.width) {
-                    for (y in 0..<this.height) {
+                for (x in 0 until this.width) {
+                    for (y in 0 until this.height) {
                         val cur = this.get(x, y)
                         if (cur.value == 'O') {
                             newBoard.set(toInsert[y], y, 'O')
@@ -55,7 +56,7 @@ class Day14 : Day<List<String>>(14) {
             Direction.SOUTH -> {
                 val toInsert = MutableList(this.width) { this.height - 1 }
                 for (y in (this.height - 1) downTo 0) {
-                    for (x in 0..<this.width) {
+                    for (x in 0 until this.width) {
                         val cur = this.get(x, y)
                         if (cur.value == 'O') {
                             newBoard.set(x, toInsert[x], 'O')
@@ -72,7 +73,7 @@ class Day14 : Day<List<String>>(14) {
             Direction.EAST -> {
                 val toInsert = MutableList(this.height) { this.width - 1 }
                 for (x in (this.width - 1) downTo 0) {
-                    for (y in 0..<this.height) {
+                    for (y in 0 until this.height) {
                         val cur = this.get(x, y)
                         if (cur.value == 'O') {
                             newBoard.set(toInsert[y], y, 'O')
@@ -103,12 +104,7 @@ class Day14 : Day<List<String>>(14) {
     }
 
     override fun run1(data: List<String>): String {
-        val board = Board(data.first().length, data.size, '.')
-        data.forEachIndexed { y, line ->
-            line.forEachIndexed { x, c ->
-                board.set(x, y, c)
-            }
-        }
+        val board = boardfromInput(data)
 
         val newBoard = board.tilt(Direction.NORTH)
         return newBoard.getTotalLoad().toString()
@@ -116,19 +112,14 @@ class Day14 : Day<List<String>>(14) {
 
     override fun run2(data: List<String>): String {
         val cycles = 1_000_000_000
-        var board = Board(data.first().length, data.size, '.')
-        data.forEachIndexed { y, line ->
-            line.forEachIndexed { x, c ->
-                board.set(x, y, c)
-            }
-        }
+        var board = boardfromInput(data)
 
         val cache = mutableMapOf<String, Board<Char>>()
 
         var firstHit = ""
         var firstIdx = 0
         var loopLength = 0
-        for (cycle in 0..<cycles) {
+        for (cycle in 0 until cycles) {
             val key = board.toString()
             val cached = cache[key]
             if (cached != null) {
@@ -150,8 +141,7 @@ class Day14 : Day<List<String>>(14) {
 
         val equivalentCycleOffset = (cycles - firstIdx) % loopLength
 
-
-        for (cycle in 0..<equivalentCycleOffset) {
+        for (cycle in 0 until equivalentCycleOffset) {
             board = cache[board.toString()]!!
         }
 

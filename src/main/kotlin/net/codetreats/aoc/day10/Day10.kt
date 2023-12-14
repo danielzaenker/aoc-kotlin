@@ -3,6 +3,7 @@ package net.codetreats.aoc.day10
 import net.codetreats.aoc.Day
 import net.codetreats.aoc.common.Board
 import net.codetreats.aoc.common.DataPoint
+import net.codetreats.aoc.common.boardfromInput
 import net.codetreats.aoc.util.Logger
 
 class Day10 : Day<List<String>>(10) {
@@ -44,16 +45,6 @@ class Day10 : Day<List<String>>(10) {
         }
     }
 
-    private fun createBoard(data: List<String>): Board<Char> {
-        val board = Board(data.first().length, data.size, '.')
-        data.forEachIndexed { y, line ->
-            line.forEachIndexed { x, c ->
-                board.set(x, y, c)
-            }
-        }
-        return board
-    }
-
     private fun solvePath(board: Board<Char>, markerBoard: Board<Char>?, start: DataPoint<Char>): Int {
         var steps = 1
         var curPos = start
@@ -75,7 +66,7 @@ class Day10 : Day<List<String>>(10) {
     override fun run1(data: List<String>): String {
         val startY = data.indexOfFirst { "S" in it }
         val startX = data[startY].indexOfFirst { it == 'S' }
-        val board = createBoard(data)
+        val board = boardfromInput(data)
         val start = board.get(startX, startY)
         return solvePath(board, null, start).toString()
     }
@@ -119,8 +110,8 @@ class Day10 : Day<List<String>>(10) {
     override fun run2(data: List<String>): String {
         val startY = data.indexOfFirst { "S" in it }
         val startX = data[startY].indexOfFirst { it == 'S' }
-        val board = createBoard(data)
-        val areaBoard = createBoard(data)
+        val board = boardfromInput(data)
+        val areaBoard = boardfromInput(data)
         val start = board.get(startX, startY)
         solvePath(board, areaBoard, start)
 

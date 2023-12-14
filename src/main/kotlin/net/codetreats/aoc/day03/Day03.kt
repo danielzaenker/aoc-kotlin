@@ -3,6 +3,7 @@ package net.codetreats.aoc.day03
 import net.codetreats.aoc.Day
 import net.codetreats.aoc.common.Board
 import net.codetreats.aoc.common.DataPoint
+import net.codetreats.aoc.common.boardfromInput
 import net.codetreats.aoc.util.Logger
 
 class Day03 : Day<List<String>>(3) {
@@ -12,18 +13,8 @@ class Day03 : Day<List<String>>(3) {
 
     override fun convert(input: List<String>): List<String> = input
 
-    private fun createBoard(data: List<String>): Board<Char> {
-        val schematic = Board(data[0].length, data.size, ' ')
-        data.forEachIndexed { y, line ->
-            line.forEachIndexed { x, symbol ->
-                schematic.set(x, y, symbol)
-            }
-        }
-        return schematic
-    }
-
     override fun run1(data: List<String>): String {
-        val schematic = createBoard(data)
+        val schematic = boardfromInput(data)
         val curNumber = mutableListOf<Char>()
         val numbers = mutableListOf<Long>()
         var isPartNumber = false
@@ -51,7 +42,7 @@ class Day03 : Day<List<String>>(3) {
     }
 
     override fun run2(data: List<String>): String {
-        val schematic = createBoard(data)
+        val schematic = boardfromInput(data)
         val curNumber = mutableListOf<Char>()
         val gears = mutableMapOf<DataPoint<Char>, MutableList<Long>>()
         var currentGear : DataPoint<Char>? = null
