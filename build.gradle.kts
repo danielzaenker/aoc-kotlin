@@ -8,6 +8,7 @@ version = "1.0-SNAPSHOT"
 
 application {
     mainClass.set("net.codetreats.aoc.MainKt")
+    applicationDefaultJvmArgs = listOf("-Xss4m")
 }
 
 repositories {
@@ -32,4 +33,5 @@ tasks {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs = listOf("-Xss4m")
 }
