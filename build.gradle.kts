@@ -33,5 +33,5 @@ tasks {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    jvmArgs = listOf("-Xss4m")
+    jvmArgs = listOf("-Xss4m", "-Xmx8g")
 }
