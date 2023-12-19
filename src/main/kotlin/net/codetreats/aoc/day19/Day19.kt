@@ -26,7 +26,7 @@ typealias Part = List<Int>
 class Day19 : Day<List<String>>(19) {
     override val logger: Logger = Logger.forDay(dayOfMonth)
 
-    override val useDummy = false
+    override val useDummy = true
 
     override fun convert(input: List<String>): List<String> = input
 
@@ -37,20 +37,19 @@ class Day19 : Day<List<String>>(19) {
         "s" to 3,
     )
     private fun parseWorkflows(data: List<String>): Map<String, Workflow> {
+        val initialRegex = """(\w+)\{(\S+)}""".toRegex()
+        val ruleRegex = """(\w)([<>])(\d+):(\w+)""".toRegex()
         val workflows = mutableMapOf<String, Workflow>()
 
         data.takeWhile { it.isNotBlank() }.forEach { line ->
-            val (name, ruleString) = line.split("{")
-            val rules = ruleString.filter { it != '}' }.split(",")
-            val workflowRules = mutableListOf<Rule>()
-            rules.take(rules.size - 1).map { r ->
-                val (exp, next) = r.split(":")
-                if (exp.contains('>')) {
-                    val (ruleName, number) = exp.split(">")
-                    workflowRules.add(Rule(categories[ruleName]!!, true, number.toInt(), next))
+            val (name, ruleString) = initialRegex.find(line)!!.destructured
+            val rules = ruleString.split(",")
+            val workflowRules = rules.take(rules.size - 1).map { r ->
+                val (ruleName, compare, number, next) = ruleRegex.find(r)!!.destructured
+                if (compare == ">") {
+                    Rule(categories[ruleName]!!, true, number.toInt(), next)
                 } else {
-                    val (ruleName, number) = exp.split("<")
-                    workflowRules.add(Rule(categories[ruleName]!!, false, number.toInt(), next))
+                    Rule(categories[ruleName]!!, false, number.toInt(), next)
                 }
             }
             val other = rules.last()
@@ -61,12 +60,9 @@ class Day19 : Day<List<String>>(19) {
     }
 
     private fun parseParts(data: List<String>): List<Part> {
-        return data.subList(data.indexOfFirst { it.isBlank() } + 1, data.size).map { line ->
-            val cats = line.filter { it != '{' && it != '}' }.split(",").map {
-                val (name, number) = it.split("=")
-                number.toInt()
-            }
-            cats
+        val partRegex = """\{x=(\d+),m=(\d+),a=(\d+),s=(\d+)}""".toRegex()
+        return data.dropWhile { it.isNotBlank() }.drop(1).map { line ->
+            partRegex.find(line)!!.groupValues.drop(1).map { it.toInt() }
         }
     }
 
