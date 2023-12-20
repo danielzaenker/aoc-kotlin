@@ -1,6 +1,7 @@
 package net.codetreats.aoc.day08
 
 import net.codetreats.aoc.Day
+import net.codetreats.aoc.common.lcm
 import net.codetreats.aoc.util.Logger
 
 data class Node(var left: Node?, var right: Node?, val content: String) {
@@ -56,10 +57,6 @@ class Day08 : Day<MutableMap<String, Node>>(8) {
     override fun run1(data: MutableMap<String, Node>): String {
         return stepsNeeded(data["AAA"]!!, "ZZZ").toString()
     }
-
-    // https://rosettacode.org/wiki/Least_common_multiple#Kotlin
-    private fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
-    private fun lcm(a: Long, b: Long): Long = a / gcd(a, b) * b
 
     private fun List<Long>.toLcm() : Long {
         return this.reduce { cur, value -> lcm(cur, value) }
