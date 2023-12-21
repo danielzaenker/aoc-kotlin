@@ -45,6 +45,23 @@ open class Board<T>(val width: Int, val height: Int, private val initialValue: T
         }
         return neighbors.filterNotNull().map { it!! }
     }
+    fun neighborsRepeated(x: Int, y: Int, withDiag: Boolean = false, withSelf: Boolean = false) : List<DataPoint<T>> {
+        val neighbors = mutableListOf<DataPoint<T>?>()
+        neighbors.add(getOrNull(Math.floorMod(x - 1, width), y))
+        neighbors.add(getOrNull(Math.floorMod(x + 1, width), y))
+        neighbors.add(getOrNull(x, Math.floorMod(y, height) - 1))
+        neighbors.add(getOrNull(x, Math.floorMod(y, height) + 1))
+        if (withDiag) {
+            neighbors.add(getOrNull(Math.floorMod(x - 1, width), Math.floorMod(y, height) - 1))
+            neighbors.add(getOrNull(Math.floorMod(x + 1, width), Math.floorMod(y, height) + 1))
+            neighbors.add(getOrNull(Math.floorMod(x - 1, width), Math.floorMod(y, height) + 1))
+            neighbors.add(getOrNull(Math.floorMod(x + 1, width), Math.floorMod(y, height) - 1))
+        }
+        if (withSelf) {
+            neighbors.add(getOrNull(x, y))
+        }
+        return neighbors.filterNotNull().map { it!! }
+    }
 
     override fun toString(): String {
         var s = StringBuilder()
